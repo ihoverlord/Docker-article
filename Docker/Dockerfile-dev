@@ -1,0 +1,7 @@
+FROM node:latest
+
+RUN mkdir -p /usr/src/dev
+WORKDIR /usr/src/dev
+COPY package.json /usr/src/dev/
+RUN npm install
+COPY . /usr/src/dev

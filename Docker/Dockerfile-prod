@@ -1,0 +1,7 @@
+FROM node:latest
+
+RUN mkdir -p /usr/src/prod
+WORKDIR /usr/src/prod
+COPY package.json /usr/src/prod/
+RUN npm install
+COPY . /usr/src/prod

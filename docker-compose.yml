@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  web-prod-server:
+    build:
+      context: ./
+      dockerfile: ./Docker/Dockerfile-prod
+    ports: 
+      - "3000"
+    expose: 
+      - "3000"
+    env_file: 
+      - ./env_files/prod.env
+    deploy:
+      restart_policy:
+        condition: on-failure # no, always, unless-stopped
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    links: 
+      - db
+    command: 
+      sh -c 'npm start'
+    networks: 
+     - application
+  
+  web-dev-server:
+    build:
+      context: ./
+      dockerfile: ./Docker/Dockerfile-dev
+    ports: 
+      - "3100"
+    expose: 
+      - "3100"
+    env_file: 
+      - ./env_files/dev.env
+    deploy:
+      restart_policy:
+        condition: on-failure # no, always, unless-stopped
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    links: 
+      - db
+    command: 
+      sh -c 'npm start'
+    networks: 
+     - application
+  
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+  
+volumes:
+  my-db:
+
+networks:
+  application:
