@@ -18,7 +18,7 @@ services:
         max_attempts: 3
         window: 120s
     links: 
-      - db
+      - prod_db
     command: 
       sh -c 'npm start'
     networks: 
@@ -41,16 +41,17 @@ services:
         max_attempts: 3
         window: 120s
     links: 
-      - db
+      - dev_db
     command: 
       sh -c 'npm start'
     networks: 
      - application
   
-  db:
+  prod_db:
     image: mysql
     restart: always
     environment:
+      MYSQL_DATABASE: 'prod'
       MYSQL_USER: 'root'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
@@ -59,10 +60,30 @@ services:
     expose:
       - '3306'
     volumes:
-      - my-db:/var/lib/mysql
+      - my-prod-db:/var/lib/mysql
+    networks: 
+     - application
+  
+  dev_db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'dev'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-dev-db:/var/lib/mysql
+    networks: 
+     - application
   
 volumes:
-  my-db:
+  my-prod-db:
+  my-dev-db:
 
 networks:
   application:
